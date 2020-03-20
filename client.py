@@ -1,17 +1,45 @@
-import socket
+from threading import Thread
+import time
+from service import TemperatureService, HumidityService
 
-HOST = '127.0.0.1'
-PORT = 5000
-tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-dest = (HOST, PORT)
-tcp.connect(dest)
+class Client(Thread):
 
-while(True):
-  msg = input('Digite uma mensagem:')
+  def __init__ (self, connection, client):
+    Thread.__init__(self)
+    print('Conectado por', client)
+    self.connection = connection
+    self.client = client
 
-  if(msg == 'exit'):
-    break
+    msg = connection.recv(1024)
 
-  tcp.send(msg.encode())
+    [conName, cmd, serviceName] = msg.split()
 
-tcp.close()
+    if(cmd != 'CONECTAR'):
+      self.connection.send('Comando invalido')
+      return
+
+    if(serviceName == 'Temperatura_1' or serviceName == 'Temperatura_2'):
+      self.service = TemperatureService()
+    elif (serviceName == 'Umidade'):
+      self.service = HumidityService()
+    else:
+      self.connection.send('Serviço não encontrado')
+
+    if(self.service):
+      name, status, temp = self.service.getStatus()
+      self.status = status
+      self.temp = temp
+
+      if(status == 'ATIVADO'):
+        self.connection.send(f'{name} {status} {temp}')
+      else:
+        self.connection.send('DESATIVADO')
+
+  def run(self):
+    while self.status == 'ATIVADO':
+      time.sleep(self.temp)
+
+      self.connection.send(self.service.getValue())
+
+    print('Finalizando conexao', self.client)
+    self.connection.close()

@@ -1,34 +1,48 @@
+import sys
 import socket
 import threading
+from listener import Listener
 
 HOST = ''
 PORT = 5000
 
-def conectado(con, cliente):
-  print('Conectado por', cliente)
+def openConfig():
+  f = open("lista_dispositivos.txt", "r")
 
-  while True:
-    msg = con.recv(1024)
+  data = f.read().splitlines()
+  data = list(map(lambda str: str.split(), data))
 
-    if not msg:
-      break
+  devices = {}
 
-    print(cliente, msg)
+  for item in data:
+    devices[item[0]] = {
+      'host': item[1],
+      'port': int(item[2])
+    }
 
-  print('Finalizando conexao do cliente', cliente)
-  con.close()
+  return devices
+
+devices = openConfig()
 
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-orig = (HOST, PORT)
-
-tcp.bind(orig)
+tcp.bind((HOST, PORT))
 tcp.listen(1)
 
-print('Ouvindo conexões ;D')
+listener = Listener(tcp)
 
 while True:
-  con, cliente = tcp.accept()
-  threading._start_new_thread(conectado, tuple([con, cliente]))
+  msg = input('Digite uma nova conexão {NOME} CONECTAR {SERVICO}:')
+
+  if(msg == 'exit'):
+    break
+    
+  das = msg.split()
+
+  if(len(das) == 3 and das[1] == 'CONECTAR'):
+    config = devices[das[2]]
+    con = tcp.connect((config['host'], config['port']))
+    con.send(msg)
+  else:
+    print('Comando desconhecido')
 
 tcp.close()
