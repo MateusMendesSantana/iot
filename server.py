@@ -29,6 +29,7 @@ tcp.bind((HOST, PORT))
 tcp.listen(1)
 
 listener = Listener(tcp)
+listener.start()   
 
 while True:
   msg = input('Digite uma nova conexão {NOME} CONECTAR {SERVICO}:')

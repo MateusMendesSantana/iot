@@ -9,37 +9,44 @@ class Client(Thread):
     print('Conectado por', client)
     self.connection = connection
     self.client = client
+    self.status = None
 
     msg = connection.recv(1024)
 
-    [conName, cmd, serviceName] = msg.split()
-
-    if(cmd != 'CONECTAR'):
-      self.connection.send('Comando invalido')
+    if(len(msg.split()) != 3):
+      print('Comando invalido', msg)
+      connection.close()
       return
 
-    if(serviceName == 'Temperatura_1' or serviceName == 'Temperatura_2'):
+    [conName, cmd, serviceName] = msg.split()
+
+    if(cmd != b'CONECTAR'):
+      print('Comando invalido', msg)
+      connection.close()
+      return
+
+    if(serviceName == b'Temperatura_1' or serviceName == b'Temperatura_2'):
       self.service = TemperatureService()
-    elif (serviceName == 'Umidade'):
+    elif (serviceName == b'Umidade'):
       self.service = HumidityService()
     else:
-      self.connection.send('Serviço não encontrado')
+      self.connection.send('Serviço não encontrado'.encode())
 
     if(self.service):
       name, status, temp = self.service.getStatus()
       self.status = status
       self.temp = temp
 
-      if(status == 'ATIVADO'):
-        self.connection.send(f'{name} {status} {temp}')
+      if(status == b'ATIVADO'):
+        self.connection.send(f'{name} {status} {temp}'.encode())
       else:
-        self.connection.send('DESATIVADO')
+        self.connection.send('DESATIVADO'.encode())
 
   def run(self):
-    while self.status == 'ATIVADO':
+    while self.status == b'ATIVADO':
       time.sleep(self.temp)
 
-      self.connection.send(self.service.getValue())
+      self.connection.send(self.service.getValue().encode())
 
     print('Finalizando conexao', self.client)
     self.connection.close()

@@ -12,6 +12,6 @@ class Listener(Thread):
   def run(self):
     while True:
       connection, client = self.tcp.accept()
-      Client(connection, client)
+      Client(connection, client).start()
 
 
