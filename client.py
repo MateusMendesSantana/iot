@@ -37,16 +37,13 @@ class Client(Thread):
       self.status = status
       self.temp = temp
 
-      if(status == b'ATIVADO'):
-        self.connection.send(f'{name} {status} {temp}'.encode())
-      else:
-        self.connection.send('DESATIVADO'.encode())
+      self.connection.send(f'{name} {status} {temp}'.encode())
 
   def run(self):
-    while self.status == b'ATIVADO':
+    while self.status == 'ATIVADO':
       time.sleep(self.temp)
 
-      self.connection.send(self.service.getValue().encode())
+      self.connection.send(str(self.service.getValue()).encode())
 
     print('Finalizando conexao', self.client)
     self.connection.close()

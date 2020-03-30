@@ -4,7 +4,7 @@ import threading
 from listener import Listener
 
 HOST = ''
-PORT = 5000
+PORT = int(input('Informe sua porta:'))
 
 def openConfig():
   f = open("lista_dispositivos.txt", "r")
@@ -41,8 +41,21 @@ while True:
 
   if(len(das) == 3 and das[1] == 'CONECTAR'):
     config = devices[das[2]]
-    con = tcp.connect((config['host'], config['port']))
-    con.send(msg)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    con = s.connect((config['host'], config['port']))
+    s.sendall(msg.encode())
+    msg = s.recv(1024)
+    das = msg.split()
+    print(msg)
+
+    if(das[1] == b'ATIVADO'):
+      while True:
+        msg = s.recv(1024)
+
+        if(msg != b''):
+          print(msg)
+    else:
+      s.close()
   else:
     print('Comando desconhecido')
 
