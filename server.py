@@ -22,6 +22,9 @@ def openConfig():
 
   return devices
 
+""" def cleanMsg(msg):
+  return msg.re """
+
 devices = openConfig()
 
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,18 +46,19 @@ while True:
     config = devices[das[2]]
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     con = s.connect((config['host'], config['port']))
-    s.sendall(msg.encode())
+    s.sendall((msg+'\n\n').encode())
     msg = s.recv(1024)
     das = msg.split()
     print(msg)
 
     if(das[1] == b'ATIVADO'):
       while True:
-        msg = s.recv(1024)
+        msg = str(s.recv(1024), 'utf-8', 'ignore')
 
-        if(msg != b''):
+        if(msg != ''):
           print(msg)
     else:
+      print('Conexão encerrada pois o serviço esta DESATIVADO')
       s.close()
   else:
     print('Comando desconhecido')

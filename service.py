@@ -5,6 +5,7 @@ class TemperatureService():
   def getStatus(self):
     name = choice(['Temperatura_1', 'Temperatura_2'])
     status = choice(['ATIVADO', 'DESATIVADO'])
+    status = 'ATIVADO'
     temp = randrange(4, 8, 1)
 
     return name, status, temp
@@ -16,6 +17,7 @@ class HumidityService():
 
   def getStatus(self):
     status = choice(['ATIVADO', 'DESATIVADO'])
+    status = 'ATIVADO'
     temp = randrange(4, 8, 1)
 
     return 'Umidade', status, temp

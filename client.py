@@ -30,20 +30,20 @@ class Client(Thread):
     elif (serviceName == b'Umidade'):
       self.service = HumidityService()
     else:
-      self.connection.send('Serviço não encontrado'.encode())
+      self.connection.send('Serviço não encontrado\n\n'.encode())
 
     if(self.service):
       name, status, temp = self.service.getStatus()
       self.status = status
       self.temp = temp
 
-      self.connection.send(f'{name} {status} {temp}'.encode())
+      self.connection.send(f'{name} {status} {temp}\n\n'.encode())
 
   def run(self):
     while self.status == 'ATIVADO':
       time.sleep(self.temp)
 
-      self.connection.send(str(self.service.getValue()).encode())
+      self.connection.send((str(self.service.getValue())+'\n\n').encode())
 
     print('Finalizando conexao', self.client)
     self.connection.close()
