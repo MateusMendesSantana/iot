@@ -4,12 +4,14 @@ from client import Client
 from utils import openConfig
 import socket
 
+CENTRAL_ID = '58'
+
 img = """
    ___________________________  .
   |---------------------------|_:::..
   |>   ______  [IOT]  ______ <|||¨|¨\\___
   |•__/______\______ /______\_|)       \•]
-  '¨¨*!(@)#(@)*¨¨¨¨¨*=!(@)#(@)=======!(@)''
+  '¨¨*!(@)#(@)*¨¨¨¨*=!(@)#(@)========!(@)''
 """
 
 
@@ -29,20 +31,17 @@ class Truck(Thread):
       Client(connection, client, self).start()
 
   def alertContainer(self, conteinerId):
-    print(f'Esvaziando conteiner {conteinerId}')
     containers = openConfig('containers.txt')
     container = containers[conteinerId]
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     con = s.connect((container['host'], container['port']))
-    s.send((f'CHEGUEI_CONTAINER {conteinerId}\n\n').encode())
+    s.send((f'CHEGUEI_CONTAINER {self.id}\n\n').encode())
     s.close()
 
   def finalizeDelivery(self):
     centrals = openConfig('centrals.txt')
-    centralId = str(randrange(0, len(centrals) - 1, 1))
-    print(f'Coleta finalizada {centralId}')
-    container = centrals[centralId]
+    central = centrals[CENTRAL_ID]
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    con = s.connect((container['host'], container['port']))
+    con = s.connect((central['host'], central['port']))
     s.send((f'COLETA_FINALIZADA {self.id}\n\n').encode())
     s.close()

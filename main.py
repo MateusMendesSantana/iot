@@ -3,10 +3,8 @@ import socket
 import threading
 from truck import Truck
 from utils import openConfig
+from env import CENTRAL_ID, ID, HOST, PORT
 
-HOST = ''
-PORT = 5000
-ID = '3'
 
 centrals = openConfig('centrals.txt')
 
@@ -14,10 +12,13 @@ tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcp.bind((HOST, PORT))
 tcp.listen(1)
 
-central = centrals['0']
+CENTRAL_ID = '58'
+central = centrals[CENTRAL_ID]
 
-con = tcp.connect((central['host'], central['port']))
-tcp.send((f'LIVRE {ID}\n\n').encode())
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+con = s.connect((central['host'], central['port']))
+s.send((f'LIVRE {ID}\n\n').encode())
+s.close()
 
 truck = Truck(tcp, ID)
 truck.start()
