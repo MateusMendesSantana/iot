@@ -39,9 +39,9 @@ class Truck(Thread):
 
   def finalizeDelivery(self):
     centrals = openConfig('centrals.txt')
-    centralId = randrange(0, len(centrals) - 1, 1)
+    centralId = str(randrange(0, len(centrals) - 1, 1))
     print(f'Coleta finalizada {centralId}')
-    container = centrals[id]
+    container = centrals[centralId]
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     con = s.connect((container['host'], container['port']))
     s.send((f'COLETA_FINALIZADA {self.id}\n\n').encode())

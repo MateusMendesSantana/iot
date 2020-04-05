@@ -6,7 +6,7 @@ from utils import openConfig
 
 HOST = ''
 PORT = 5000
-ID = 3
+ID = '3'
 
 centrals = openConfig('centrals.txt')
 
