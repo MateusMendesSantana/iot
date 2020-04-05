@@ -13,5 +13,3 @@ class Listener(Thread):
     while True:
       connection, client = self.tcp.accept()
       Client(connection, client).start()
-
-

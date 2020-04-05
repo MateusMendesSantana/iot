@@ -1,7 +1,0 @@
-Temperatura_1 0.tcp.ngrok.io 10941
-Temperatura_2 0.tcp.sa.ngrok.io 13576
-Umidade 0.tcp.ngrok.io 10179
-Temperatura_K 0.tcp.sa.ngrok.io 18352
-Temperatura_J 0.tcp.sa.ngrok.io 19920
-Temperatura_L 0.tcp.sa.ngrok.io 14296
-Temperatura_Sergio smbo.ddns.net 8082

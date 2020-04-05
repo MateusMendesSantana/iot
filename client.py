@@ -1,6 +1,6 @@
 from threading import Thread
+from random import choice, randrange
 import time
-from service import TemperatureService, HumidityService
 
 class Client(Thread):
 
@@ -9,41 +9,17 @@ class Client(Thread):
     print('Conectado por', client)
     self.connection = connection
     self.client = client
-    self.status = None
 
-    msg = connection.recv(1024)
-
-    if(len(msg.split()) != 3):
-      print('Comando invalido', msg)
-      connection.close()
-      return
-
-    [conName, cmd, serviceName] = msg.split()
-
-    if(cmd != b'CONECTAR'):
-      print('Comando invalido', msg)
-      connection.close()
-      return
-
-    if(serviceName == b'Temperatura_1' or serviceName == b'Temperatura_2'):
-      self.service = TemperatureService()
-    elif (serviceName == b'Umidade'):
-      self.service = HumidityService()
-    else:
-      self.connection.send('Serviço não encontrado\n\n'.encode())
-
-    if(self.service):
-      name, status, temp = self.service.getStatus()
-      self.status = status
-      self.temp = temp
-
-      self.connection.send(f'{name} {status} {temp}\n\n'.encode())
 
   def run(self):
-    while self.status == 'ATIVADO':
-      time.sleep(self.temp)
+    msg = self.connection.recv(1024)
 
-      self.connection.send((str(self.service.getValue())+'\n\n').encode())
+    [cmd, content] = msg.split()
 
-    print('Finalizando conexao', self.client)
+    if(cmd == b'COLETAR'):
+      temp = randrange(5, 20, 1)
+      self.connection.send(f'{temp}\n\n'.encode())
+      self.connection.close()
+      time.sleep(temp)
+
     self.connection.close()
