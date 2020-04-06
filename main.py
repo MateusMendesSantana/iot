@@ -12,7 +12,6 @@ tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcp.bind((HOST, PORT))
 tcp.listen(1)
 
-CENTRAL_ID = '58'
 central = centrals[CENTRAL_ID]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

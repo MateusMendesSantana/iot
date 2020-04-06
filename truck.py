@@ -2,9 +2,8 @@ from threading import Thread
 from random import randrange
 from client import Client
 from utils import openConfig
+from env import CENTRAL_ID
 import socket
-
-CENTRAL_ID = '58'
 
 img = """
    ___________________________  .
